@@ -20,10 +20,6 @@ async function createVtt(mediaSegments, outFilename) {
         // let dur = getDuration(mediaSegment.clipBegin.seconds, mediaSegment.clipEnd.seconds);
         let dur = mediaSegment.durOnDisk;
         let metadata = {
-            action: {
-                name: "addCssClass",
-                data: "abinb-sync-highlight"
-            },
             selector: {
                 type: "FragmentSelector",
                 value: `${textId}`
