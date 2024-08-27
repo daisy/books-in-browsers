@@ -1,6 +1,3 @@
-import fs from 'fs-extra';
-import iconv from 'iconv-lite';
-import { DOMParser, XMLSerializer } from 'xmldom';
 import * as utils from '../utils.js';
 import * as fileio from '../file-io.js';
 import xpath from 'xpath';

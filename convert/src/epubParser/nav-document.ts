@@ -1,5 +1,3 @@
-import fs from 'fs-extra';
-import * as utils from '../utils.js';
 import * as fileio from '../file-io.js';
 import xpath from 'xpath';
 import path from 'path';

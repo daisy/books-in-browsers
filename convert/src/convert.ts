@@ -1,7 +1,6 @@
 import * as epubParser from './epubParser/index.js';
 import * as logger from './logger/index.js';
 import * as path from 'path';
-import {singleToMultiPage} from './single-to-multi-page.js';
 import * as utils from './utils.js';
 import fs from 'fs-extra';
 import {renameFileUpdateRefs, updateXHtml } from './rename-epub-file.js';
@@ -27,7 +26,7 @@ let select = xpath.useNamespaces({
 });
 
 
-async function convert(inputDir, outputDir, pathToSharedClientCode, skipMergeAudio=false, splitContentDoc=false) {
+async function convert(inputDir, outputDir, pathToSharedClientCode) {
     logger.initLogger(path.join(process.cwd(), "output.log"));
 
     // copy to a working directory
@@ -36,7 +35,7 @@ async function convert(inputDir, outputDir, pathToSharedClientCode, skipMergeAud
     
     await fs.copy(inputDir, workingDir);
 
-    await prepareFiles(workingDir, splitContentDoc);
+    await prepareFiles(workingDir);
         
     // for each spine item, find its audio clips
     let epub = await epubParser.parse(workingDir);
@@ -62,9 +61,7 @@ async function convert(inputDir, outputDir, pathToSharedClientCode, skipMergeAud
             audioFilename = path.join(audioOutputDir, spineItemFilename.replace(".html", ".mp3"));
             vttFilename = path.join(vttOutputDir, spineItemFilename.replace(".html", '.vtt'));
 
-            if (!skipMergeAudio) {
-                await mergeAudioSegments(mediaSegments, audioFilename);
-            }
+            await mergeAudioSegments(mediaSegments, audioFilename);
             await createVtt(mediaSegments, vttFilename);
             audioFilenames.push(audioFilename);
         }
@@ -150,29 +147,19 @@ async function convert(inputDir, outputDir, pathToSharedClientCode, skipMergeAud
     await prettyHtml(path.join(path.dirname(epub.navFilename), "about.html"));
 
     await generateSearchIndex(spineFiles, path.dirname(epub.navFilename));
-    
-    
-    
 }
 
 // modify the files in workingDir to prepare them for conversion
-// optionally split a monolithic content doc into many files
 // rename xhtml to html
 // make sure there's an index.html entry point file
-async function prepareFiles(workingDir, splitContentDoc) {
-    // if there's a monolithic content doc, split it up
-    if (splitContentDoc) {
-        // also deletes the original single content doc
-        await singleToMultiPage(workingDir);
-    }
-
+async function prepareFiles(workingDir) {
     let epub = await epubParser.parse(workingDir);
 
-    // identify the entry page
-    // TODO grab the cover if there is one
-    // else just use the first spine item
+    // the entry page is assumed to be the first spine item
+    // another idea is to grab the cover, if there is one
     let entryPage = epub.spine[0];
     
+    // TODO what if there was already a file called 'index'
     let renamedPaths = [];
     let renamedPath = {old: entryPage.path, new: path.join(path.dirname(entryPage.path), "index.html")};
     renamedPaths.push(renamedPath);
@@ -183,8 +170,6 @@ async function prepareFiles(workingDir, splitContentDoc) {
         renamedPath.new,
         epub
     );
-    
-    
 
     // rename all other spine items from xhtml to html
     for (let spineItem of epub.spine.slice(1)) {
@@ -199,7 +184,7 @@ async function prepareFiles(workingDir, splitContentDoc) {
             );
         }
     }
-
+    // TODO what if there was already a file (a content doc file) called 'nav'? 
     renamedPath = {old: epub.navFilename, new: path.join(path.dirname(epub.navFilename), "nav.html")};
     renamedPaths.push(renamedPath);
     epub.navFilename = renamedPath.new;

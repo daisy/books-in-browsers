@@ -1,5 +1,3 @@
-import fs from 'fs-extra';
-import * as path from 'path';
 import * as fileio from './file-io.js';
 
 // TODO dynamic favico

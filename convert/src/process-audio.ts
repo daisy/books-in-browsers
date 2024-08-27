@@ -1,22 +1,8 @@
-import { path as ffmpegPath } from '@ffmpeg-installer/ffmpeg';
-import { path as ffprobePath } from '@ffprobe-installer/ffprobe';
 import ffmpeg from 'fluent-ffmpeg';
-
-import fs from 'fs-extra';
-import * as fileio from './file-io.js';
-import xpath from 'xpath';
 import * as path from 'path';
 import * as utils from './utils.js';
 import winston from 'winston';
 import tmp from 'tmp';
-
-let select = xpath.useNamespaces({
-    html: 'http://www.w3.org/1999/xhtml',
-    epub: "http://www.idpf.org/2007/ops",
-    dc: "http://purl.org/dc/elements/1.1/",
-    opf: "http://www.idpf.org/2007/opf",
-    smil: "http://www.w3.org/ns/SMIL"
-});
 
 async function mergeAudioSegments(mediaSegments, outFilename) {
     winston.info(`Merging audio clips into ${outFilename}`);

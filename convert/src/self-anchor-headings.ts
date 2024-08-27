@@ -1,5 +1,3 @@
-import fs from 'fs-extra';
-import * as utils from './utils.js';
 import { parse, write } from './file-io.js';
 
 // add self-linking anchors to each heading

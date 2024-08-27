@@ -9,18 +9,6 @@ function sniffEncoding(filepath: string) {
     return encoding;
 }
 
-function toHHMMSS(secs) {
-    var sec_num = parseInt(secs, 10)
-    var hours = Math.floor(sec_num / 3600)
-    var minutes = Math.floor(sec_num / 60) % 60
-    var seconds = secs % 60
-
-    return [hours, minutes, seconds.toFixed(3)]
-        .map(v => v < 10 ? "0" + v : v)
-        .filter((v, i) => v !== "00" || i > 0)
-        .join(":")
-}
-
 // parse the timestamp and return the value in seconds
 // supports this syntax: http://idpf.org/epub/30/spec/epub30-mediaoverlays.html#app-clock-examples
 function toSeconds(value: string) {        
@@ -71,27 +59,6 @@ async function ensureDirectory(dir: string, ensureIsEmpty: boolean = false) {
     }
 }
 
-// stolen from other project
-// TODO fixme
-// return {src, selector} for the src
-function splitSrcSelector(src: string) {
-    let idx = src.lastIndexOf("#");
-    let selector = "";
-    let src_ = src;
-    // trim trailing hash
-    if (idx == src.length - 1) {
-        src_ = src.slice(0, idx);
-    }
-    else {
-        // separate out the selector from the src
-        if (idx != -1) {
-            selector = src.slice(idx);
-            src_ = src.slice(0, idx);
-        }
-    }
-    return { src: src_, selector };
-}
-
 function addItem (key, value, obj) {
     // combine duplicates into an array
     if (obj[key]) {
@@ -138,4 +105,4 @@ async function getDuration(filename) {
     return dur;
 }
 
-export { sniffEncoding, toHHMMSS, toSeconds, ensureDirectory, splitSrcSelector, addItem, getFrag, getWithoutFrag, getDuration };
+export { sniffEncoding, toSeconds, ensureDirectory, addItem, getFrag, getWithoutFrag, getDuration };

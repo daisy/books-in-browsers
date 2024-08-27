@@ -1,7 +1,6 @@
 import fs from 'fs-extra';
 import iconv from 'iconv-lite';
 import { DOMParser, XMLSerializer } from 'xmldom';
-import xpath from 'xpath';
 import * as utils from './utils.js';
 import path from 'path';
 import { JSDOM } from 'jsdom';
