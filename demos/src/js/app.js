@@ -4,6 +4,7 @@ import { createPlaybackToolbar } from './toolbars/playback.js';
 import { createApplicationToolbar } from './toolbars/application.js';
 import { createNavPanelContents } from './panels/nav.js';
 import { createSettingsPanelContents } from './panels/settings.js';
+import { highlightInPageSearchResult } from './search.js';
 import * as player from './player.js';
 
 async function setupUi(searchIndexUrl, searchDataUrl) {
@@ -38,16 +39,11 @@ async function setupUi(searchIndexUrl, searchDataUrl) {
         });
     }
 
+    // this page may have loaded with a search result target in mind, if so highlight it
     if (localStorage.getItem("abinb-target")) { 
-        let elm = document.querySelector(localStorage.getItem("abinb-target"));
-        if (elm) {
-            elm.classList.add("search-result");
-            elm.scrollIntoView();
-            elm.setAttribute("role", "mark");
-        }
+        highlightInPageSearchResult(localStorage.getItem("abinb-target"));
+        localStorage.setItem("abinb-target", null);
     }
-    localStorage.setItem("abinb-target", null);
-
     document.documentElement.classList.remove("abinb-js");
     document.querySelector("body").classList.add("abinb-fadein");
 

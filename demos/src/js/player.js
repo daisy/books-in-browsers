@@ -1,4 +1,4 @@
-import { createRange } from "./range";
+import { createRange } from "./range.js";
 
 let audio;
 let activeCueIdx = -1; 
@@ -62,7 +62,7 @@ function startCueAction(cueMetadata) {
         if (canPlay(elm)) {
             let range = createRange(cueMetadata.selector);
             let highlight = new Highlight(range);
-            CSS.highlights.set("sync", highlight);
+            CSS.highlights.set("narration", highlight);
             if (!isInViewport(elm, document)) {
                 elm.scrollIntoView();
             }
@@ -155,7 +155,6 @@ function jumpToFragment() {
     let getMatchingCueIdx = elm => allSelectors.findIndex(selector => elm.matches(`#${selector}`));
 
     let targetElm = document.querySelector(document.location.hash);
-    
 
     // first see if the target element or any of its descendents have a matching cue
     let matchingCueIdx = getMatchingCueIdx(targetElm);
@@ -176,7 +175,7 @@ function jumpToFragment() {
         }
     }
     if (matchingCueIdx == -1) {
-        console.log("ugh TODO");
+        console.log("Warning: matching cue not found");
         /*
         this could happen for something like
         <h1 id="target-elm">The href in the URL bar goes here</h1>
@@ -192,45 +191,6 @@ function jumpToFragment() {
         audio.currentTime = track.cues[matchingCueIdx].startTime;
     }
     
-}
-
-// parse the timestamp and return the value in seconds
-// supports this syntax: https://www.w3.org/publishing/epub/epub-mediaoverlays.html#app-clock-examples
-function parseClockValue(value) { 
-    if (!value) {
-        return null;
-    }
-    let hours = 0;
-    let mins = 0;
-    let secs = 0;
-    
-    if (value.indexOf("min") != -1) {
-        mins = parseFloat(value.substr(0, value.indexOf("min")));
-    }
-    else if (value.indexOf("ms") != -1) {
-        var ms = parseFloat(value.substr(0, value.indexOf("ms")));
-        secs = ms/1000;
-    }
-    else if (value.indexOf("s") != -1) {
-        secs = parseFloat(value.substr(0, value.indexOf("s")));                
-    }
-    else if (value.indexOf("h") != -1) {
-        hours = parseFloat(value.substr(0, value.indexOf("h")));                
-    }
-    else {
-        // parse as hh:mm:ss.fraction
-        // this also works for seconds-only, e.g. 12.345
-        let arr = value.split(":");
-        secs = parseFloat(arr.pop());
-        if (arr.length > 0) {
-            mins = parseFloat(arr.pop());
-            if (arr.length > 0) {
-                hours = parseFloat(arr.pop());
-            }
-        }
-    }
-    let total = hours * 3600 + mins * 60 + secs;
-    return total;
 }
 
 export { load, audio, goNext, goPrevious, canGoNext, canGoPrevious, jumpToFragment };
