@@ -1,3 +1,5 @@
+import { createRange } from "./range";
+
 let audio;
 let activeCueIdx = -1; 
 let activeCueMetadata;
@@ -55,36 +57,35 @@ function onCueChange(e) {
 }
 function startCueAction(cueMetadata) {
     activeCueMetadata = cueMetadata;
-    if (cueMetadata.action.name == "addCssClass") {
-        let elm = select(cueMetadata.selector);
-        if (elm) {
-            if (canPlay(elm)) {
-                elm.classList.add(cueMetadata.action.data);
-                if (!isInViewport(elm, document)) {
-                    elm.scrollIntoView();
-                }
-            }
-            else {
-                if (goingBackwards) {
-                    goingBackwards = false;
-                    goPrevious();
-                }
-                else {
-                    goNext();
-                }
+    let elm = select(cueMetadata.selector);
+    if (elm) {
+        if (canPlay(elm)) {
+            let range = createRange(cueMetadata.selector);
+            let highlight = new Highlight(range);
+            CSS.highlights.set("sync", highlight);
+            if (!isInViewport(elm, document)) {
+                elm.scrollIntoView();
             }
         }
         else {
-            console.debug(`Element not found ${cueMetadata.selector}`);
+            if (goingBackwards) {
+                goingBackwards = false;
+                goPrevious();
+            }
+            else {
+                goNext();
+            }
         }
+    }
+    else {
+        console.debug(`Element not found ${cueMetadata.selector}`);
     }
 }
 function endCueAction() {
     if (!activeCueMetadata) return;
     let elm = select(activeCueMetadata.selector);
-    // undo add css class
-    if (elm && activeCueMetadata.action.name == "addCssClass") {
-        document.querySelector(`.${activeCueMetadata.action.data}`)?.classList.remove(activeCueMetadata.action.data);
+    if (elm) {
+        // TODO undo highlight? may not be necessary.
     }
 }
 function select(selector) {
@@ -178,7 +179,7 @@ function jumpToFragment() {
         console.log("ugh TODO");
         /*
         this could happen for something like
-        <h1 id="target-elm">The href goes here</h1>
+        <h1 id="target-elm">The href in the URL bar goes here</h1>
         <p id="cue-point">But this is the nearest narration point</p>
         */
        // so do we do an exhaustive dom search looking for the nearest starting point in this case?
