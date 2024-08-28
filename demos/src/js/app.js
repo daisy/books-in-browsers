@@ -39,14 +39,16 @@ async function setupUi(searchIndexUrl, searchDataUrl) {
         });
     }
 
+    // make it visible before doing any visual stuff
+    document.documentElement.classList.remove("abinb-js");
+    document.querySelector("body").classList.add("abinb-fadein");
+
     // this page may have loaded with a search result target in mind, if so highlight it
     if (localStorage.getItem("abinb-target")) { 
         highlightInPageSearchResult(localStorage.getItem("abinb-target"));
         localStorage.setItem("abinb-target", null);
     }
-    document.documentElement.classList.remove("abinb-js");
-    document.querySelector("body").classList.add("abinb-fadein");
-
+    
     if (localStorage.getItem("abinb-autoplay") == "true") {
         localStorage.setItem("abinb-autoplay", false);
         // let playButton = document.querySelector("#abinb-playpause");
