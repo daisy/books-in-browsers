@@ -1,5 +1,5 @@
-import Fuse from 'https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.esm.js'
-import { createRange } from './range.js';
+import Fuse from 'https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.esm.js';
+import * as Utils from './utils.js';
 
 async function initSearchPanel(searchPanel, searchIndexUrl, searchDataUrl) {
     searchPanel.innerHTML = 
@@ -31,10 +31,12 @@ async function initSearchPanel(searchPanel, searchIndexUrl, searchDataUrl) {
 function highlightInPageSearchResult(selector) {
     let elm = document.querySelector(selector);
     if (elm) {
-        let range = createRange({type: "CssSelector", value: selector});
+        let range = Utils.createRange({type: "CssSelector", value: selector});
         let highlight = new Highlight(range);
         CSS.highlights.set("searchresult", highlight);
-        elm.scrollIntoView();
+        if (!Utils.isInViewport(elm, document)) {
+            elm.scrollIntoView();
+        }
         elm.setAttribute("role", "mark");
     }
 }

@@ -1,3 +1,14 @@
+function isInViewport(elm) {
+    let bounding = elm.getBoundingClientRect();
+    let doc = elm.ownerDocument;
+    return (
+        bounding.top >= 0 &&
+        bounding.left >= 0 &&
+        bounding.bottom <= (doc.defaultView.innerHeight || doc.documentElement.clientHeight) &&
+        bounding.right <= (doc.defaultView.innerWidth || doc.documentElement.clientWidth)
+    );
+}
+
 // Supports FragmentSelector and CssSelector optionally with TextPositionSelector as its refinedBy
 function createRange(selector) {
     let sel = selector.type == "FragmentSelector" ? 
@@ -25,4 +36,4 @@ function createRange(selector) {
     });
 }
 
-export { createRange };
+export { createRange, isInViewport };

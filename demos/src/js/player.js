@@ -1,4 +1,4 @@
-import { createRange } from "./range.js";
+import * as Utils from "./utils.js";
 
 let audio;
 let activeCueIdx = -1; 
@@ -60,10 +60,10 @@ function startCueAction(cueMetadata) {
     let elm = select(cueMetadata.selector);
     if (elm) {
         if (canPlay(elm)) {
-            let range = createRange(cueMetadata.selector);
+            let range = Utils.createRange(cueMetadata.selector);
             let highlight = new Highlight(range);
             CSS.highlights.set("narration", highlight);
-            if (!isInViewport(elm, document)) {
+            if (!Utils.isInViewport(elm, document)) {
                 elm.scrollIntoView();
             }
         }
@@ -121,16 +121,6 @@ function canGoNext() {
 }
 function canGoPrevious() {
     return curridx > 0;
-}
-function isInViewport(elm) {
-    let bounding = elm.getBoundingClientRect();
-    let doc = elm.ownerDocument;
-    return (
-        bounding.top >= 0 &&
-        bounding.left >= 0 &&
-        bounding.bottom <= (doc.defaultView.innerHeight || doc.documentElement.clientHeight) &&
-        bounding.right <= (doc.defaultView.innerWidth || doc.documentElement.clientWidth)
-    );
 }
 function canPlay(elm) {
     // true unless this is a pagebreak
