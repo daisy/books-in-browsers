@@ -16,9 +16,22 @@ Media Overlays conversion adds the following:
 - Embedding that audio file in the HTML page
 - A VTT file containing the phrase timing information for that audio file
 
+## Updates
+
+September 2024
+
+* VTT sync format updated to stay current with latest Synchronized Media in Publications recommendation
+* Chapters can play through (#3) 
+_Read about [autoplay](https://github.com/daisy/accessible-books-in-browsers/wiki/About-%60autoplay%60)_
+* An [experimental sample in Arabic](https://github.com/daisy/accessible-books-in-browsers/wiki/Right-to-left-support) was generated, though it's not online as the files are a bit too big for github. Will try to work around or host elsewhere.
+* CSS Custom Highlight API used everywhere that text has to be highlighted (playback highlight and search results). This is a way to support sub-element highlighting (e.g. word-level) without marking up the text with IDs everywhere.
+* Bugs were fixed: #32, #8
+
 ## Demos
 
-Viewing these requires an up to date browser, specifically because they use [CSS Custom Highlights](https://developer.mozilla.org/en-US/docs/Web/API/CSS_Custom_Highlight_API#browser_compatibility) and [`autoplay` permissions](https://developer.mozilla.org/en-US/docs/Web/API/CSS_Custom_Highlight_API#browser_compatibility).
+Viewing these requires an up to date browser, specifically because they use the [CSS Custom Highlight API](https://developer.mozilla.org/en-US/docs/Web/API/CSS_Custom_Highlight_API#browser_compatibility) and [`autoplay` permissions](https://developer.mozilla.org/en-US/docs/Web/API/CSS_Custom_Highlight_API#browser_compatibility).
+
+As of now (Sept 2024), the latest of Chrome, Firefox, and Safari perform reasonably; though in Firefox, the [highlight API](https://developer.mozilla.org/en-US/docs/Mozilla/Firefox/Experimental_features#css_custom_highlight_api) is experimental right now so support has to be enabled by setting a preference (see their docs for details).
 
 To autoplay the contents from chapter to chapter, go to the page and then go to "site settings" in your browser. Under "audio", say "allow". You only have to do this once for the whole demo site (per domain).
 
