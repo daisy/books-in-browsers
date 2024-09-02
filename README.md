@@ -18,6 +18,10 @@ Media Overlays conversion adds the following:
 
 ## Demos
 
+Viewing these requires an up to date browser, specifically because they use [CSS Custom Highlights](https://developer.mozilla.org/en-US/docs/Web/API/CSS_Custom_Highlight_API#browser_compatibility) and [`autoplay` permissions](https://developer.mozilla.org/en-US/docs/Web/API/CSS_Custom_Highlight_API#browser_compatibility).
+
+To autoplay the contents from chapter to chapter, go to the page and then go to "site settings" in your browser. Under "audio", say "allow". You only have to do this once for the whole demo site (per domain).
+
 * [Action for Heroes](https://daisy.github.io/accessible-books-in-browsers/demos/action-for-heroes)
 * [Moby Dick](https://daisy.github.io/accessible-books-in-browsers/demos/moby-dick)
 
@@ -46,13 +50,6 @@ These demos were created using this [conversion script](https://github.com/daisy
 ### Conversion
 A few things (navigation document consistency across publications; colors in stylesheets or things marked `!important`) were adjusted manually in the EPUB source; this is, after all, just a prototype. But these aspects can and will be automated in the future.
 
-
-### User interface
-
-- Autoplay between chapters is [not working yet](https://github.com/daisy/accessible-books-in-browsers/issues/3)
-- Slight flashing on page load if not using dark mode
-
-[See issues list](https://github.com/daisy/accessible-books-in-browsers/issues)
 
 ## Approach
 
