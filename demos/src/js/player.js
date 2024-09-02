@@ -1,31 +1,25 @@
 import * as Utils from "./utils.js";
 
-let audio;
 let activeCueIdx = -1; 
 let activeCueMetadata;
 let goingBackwards = false;
-let startedPlayback = false;
 
-async function load() {
-    audio = document.querySelector("#abinb-audio");
+function load() {
+    let audio = document.querySelector("#abinb-audio");
     let track = document.querySelector("#abinb-audio track");
     track.track.addEventListener("cuechange", onCueChange);
-    
     audio.addEventListener("play", e => {
-        startedPlayback = true;
         document.querySelector("body").classList.add("abinb-playing");
-        document.querySelector("#abinb-playpause").setAttribute("title", "Pause");
-        document.querySelector("#abinb-playpause").setAttribute("aria-label", "Pause");
     });
     audio.addEventListener("pause", e => {
         document.querySelector("body").classList.remove("abinb-playing");
-        document.querySelector("#abinb-playpause").setAttribute("title", "Play");
-        document.querySelector("#abinb-playpause").setAttribute("aria-label", "Play");
     });
     audio.addEventListener("ended", e => {
-        localStorage.setItem("abinb-autoplay", true);
         let nextSection = document.querySelector("#abinb-next-section");
-        if (nextSection) nextSection.click();
+        if (nextSection) {
+            localStorage.setItem("abinb-autoplay", true);
+            nextSection.click();
+        } 
     });
     
     // hide the basic html audio player
@@ -44,6 +38,7 @@ async function load() {
 }
 
 function onCueChange(e) {
+    let audio = document.querySelector("#abinb-audio");
     let track = audio.textTracks[0];
     // console.debug("cue change", e);
     let activeCues = Array.from(e.target.activeCues);
@@ -98,6 +93,7 @@ function select(selector) {
     else return null;
 }
 function goNext() {
+    let audio = document.querySelector("#abinb-audio");
     goingBackwards = false;
     let track = audio.textTracks[0];
     if (activeCueIdx != -1) {
@@ -107,6 +103,7 @@ function goNext() {
     }
 }
 function goPrevious() {
+    let audio = document.querySelector("#abinb-audio");
     goingBackwards = true;
     let track = audio.textTracks[0];
     if (activeCueIdx != -1) {
@@ -132,9 +129,10 @@ function canPlay(elm) {
 // call this when a new page loads
 // it searches the cues list for a starting point, based on the document location hash
 function jumpToFragment() {
+    let audio = document.querySelector("#abinb-audio");
     // only do it if the page is newly loaded
     // caveat and TODO: this doesn't handle in-page jumps 
-    if (startedPlayback) return;
+    //if (startedPlayback) return;
     if (document.location.hash == '') return;
     let track = audio.textTracks[0];
     // all the element selectors that we have cues for
@@ -183,4 +181,4 @@ function jumpToFragment() {
     
 }
 
-export { load, audio, goNext, goPrevious, canGoNext, canGoPrevious, jumpToFragment };
+export { load, goNext, goPrevious, canGoNext, canGoPrevious, jumpToFragment };

@@ -13,17 +13,17 @@ async function setupUi(searchIndexUrl, searchDataUrl) {
     let aboutUrl = new URL(document.querySelector("#abinb-about-link").getAttribute("href"), document.location);
     let navUrl = new URL(document.querySelector("#abinb-toc-link").getAttribute("href"), document.location);
 
-    await createNavToolbar();
+    createNavToolbar();
     await createNavPanelContents(navUrl, aboutUrl, searchIndexUrl, searchDataUrl);
     
     let hasSyncAudio = false;
     if (document.querySelector("#abinb-audio")) {
         hasSyncAudio = true;
-        await player.load();
         createPlaybackToolbar();
+        player.load();
     }
     createApplicationToolbar('../src/help');
-    await createSettingsPanelContents(hasSyncAudio);
+    createSettingsPanelContents(hasSyncAudio);
     setupKeyboardShortcuts();
 
     let nextSection = document.querySelector("#abinb-next-section");
@@ -50,16 +50,13 @@ async function setupUi(searchIndexUrl, searchDataUrl) {
     }
     
     if (localStorage.getItem("abinb-autoplay") == "true") {
+        console.log("autoplay: yes");
         localStorage.setItem("abinb-autoplay", false);
-        // let playButton = document.querySelector("#abinb-playpause");
-        // try {
-        //     console.debug("Attempting to start playback automatically");
-        //     if (playButton) playButton.click();
-        //     else console.error("Play button not found");
-        // }
-        // catch(err) {
-        //     console.error(err);
-        // }
+        let audio = document.querySelector("#abinb-audio");
+        if (audio) audio.autoplay = true;
+    }
+    else {
+        console.log("autoplay: no");
     }
 }
 

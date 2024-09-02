@@ -1,6 +1,4 @@
-import * as player from '../player.js';
-
-async function createSettingsPanelContents(includeAudioControls = false) {
+function createSettingsPanelContents(includeAudioControls = false) {
     let settingsPanelContents = document.querySelector("#abinb-settings > div");
     settingsPanelContents.innerHTML = 
     `<h2>Settings</h2>
@@ -226,9 +224,10 @@ function setRate(rate) {
         document.querySelector("#abinb-rate-value").textContent = `${rate}%`;
     }
 
+    let audio = document.querySelector("#abinb-audio");
     // set the rate
-    if (player.audio) {
-        player.audio.playbackRate = parseInt(rate)/100;
+    if (audio) {
+        audio.playbackRate = parseInt(rate)/100;
     }
 }
 

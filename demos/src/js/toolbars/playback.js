@@ -38,14 +38,15 @@ function createPlaybackToolbar() {
         step="5">
     </input>`;
 
-    toolbar.querySelector("#abinb-playpause").addEventListener("click", async e => {
-        if (!player.audio.paused) {
-            player.audio.pause();
+    toolbar.querySelector("#abinb-playpause").addEventListener("click", e => {
+        let audio = document.querySelector("#abinb-audio");
+        if (!audio.paused) {
+            audio.pause();
         }
         else {
             try {
                 player.jumpToFragment();
-                await player.audio.play();
+                audio.play();
             }
             catch(err) {
                 console.error("Play() failed");
@@ -64,7 +65,8 @@ function createPlaybackToolbar() {
     let volumeRange = document.querySelector("#abinb-volume");
     let setVolume = (volume, player) => {
         localStorage.setItem("abinb-volume", volume);
-        player.audio.volume = volume/100;
+        let audio = document.querySelector("#abinb-audio");
+        audio.volume = volume/100;
         volumeRange.value = volume;
     };
 
@@ -72,6 +74,16 @@ function createPlaybackToolbar() {
     setVolume(volume, player);
     volumeRange.addEventListener("input", e => {
         setVolume(e.target.value, player);
+    });
+
+    let audio = document.querySelector("#abinb-audio");
+    audio.addEventListener("play", e => {
+        document.querySelector("#abinb-playpause").setAttribute("title", "Pause");
+        document.querySelector("#abinb-playpause").setAttribute("aria-label", "Pause");
+    });
+    audio.addEventListener("pause", e => {
+        document.querySelector("#abinb-playpause").setAttribute("title", "Play");
+        document.querySelector("#abinb-playpause").setAttribute("aria-label", "Play");
     });
 }
 
