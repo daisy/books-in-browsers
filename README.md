@@ -84,3 +84,15 @@ Add javascript enhancements:
 What this isn't:
 * An authoring format definition
 * A generic "player" to apply to any EPUB
+
+## Spaces to watch
+
+Advances in these areas would make this project better.
+
+* Coordinating screen reader focus with browser text highlights.
+https://stackoverflow.com/questions/31921688/moving-the-cursor-in-a-screen-reader  
+_Use case: user wants to stop synchronized playback and use their screen reader to explore at a word or character level._
+
+* Web packaging
+https://github.com/WICG/webpackage  
+_Use case: package material for downloadable/offline distribution_
