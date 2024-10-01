@@ -12,7 +12,7 @@ let select = xpath.useNamespaces({
     smil: "http://www.w3.org/ns/SMIL"
 });
 
-// in the entire EPUB, rename oldFilename refs to newFilename
+// in the entire EPUB
 async function renameFileUpdateRefs(oldFilename, newFilename, epub, isNavFile=false) {
     console.debug("rename file", `${oldFilename} => ${newFilename}`);
     let spineItem = epub.spine.find(item => item.path == newFilename);
@@ -55,8 +55,7 @@ async function updateXHtml(contentFilename, replacements) {
         if (linkElm.hasAttribute("href")) {
             //@ts-ignore
             let src = path.join(path.dirname(contentFilename), linkElm.getAttribute("href"));
-            // if (utils.getWithoutFrag(src) == searchFilename) {
-                let srcNoFrag = utils.getWithoutFrag(src);
+            let srcNoFrag = utils.getWithoutFrag(src);
             // if this src is among the things that need replacing... 
             if (replacements.map(item => item.old).includes(srcNoFrag)) {
                 let frag = utils.getFrag(src);
@@ -97,8 +96,7 @@ async function updateHtml(contentFilename, replacements) {
         if (linkElm.hasAttribute("href")) {
             //@ts-ignore
             let src = path.join(path.dirname(contentFilename), linkElm.getAttribute("href"));
-            // if (utils.getWithoutFrag(src) == searchFilename) {
-                let srcNoFrag = utils.getWithoutFrag(src);
+            let srcNoFrag = utils.getWithoutFrag(src);
             // if this src is among the things that need replacing... 
             if (replacements.map(item => item.old).includes(srcNoFrag)) {
                 let frag = utils.getFrag(src);

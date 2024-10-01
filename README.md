@@ -16,7 +16,24 @@ Media Overlays conversion adds the following:
 - Embedding that audio file in the HTML page
 - A VTT file containing the phrase timing information for that audio file
 
+## Updates
+
+September 2024
+
+* VTT sync format updated to stay current with latest Synchronized Media in Publications recommendation
+* Chapters can play through (#3) 
+_Read about [autoplay](https://github.com/daisy/accessible-books-in-browsers/wiki/About-%60autoplay%60)_
+* An [experimental sample in Arabic](https://github.com/daisy/accessible-books-in-browsers/wiki/Right-to-left-support) was generated, though it's not online as the files are a bit too big for github. Will try to work around or host elsewhere.
+* CSS Custom Highlight API used everywhere that text has to be highlighted (playback highlight and search results). This is a way to support sub-element highlighting (e.g. word-level) without marking up the text with IDs everywhere.
+* Bugs were fixed: #32, #8
+
 ## Demos
+
+Viewing these requires an up to date browser, specifically because they use the [CSS Custom Highlight API](https://developer.mozilla.org/en-US/docs/Web/API/CSS_Custom_Highlight_API#browser_compatibility) and [`autoplay` permissions](https://developer.mozilla.org/en-US/docs/Web/API/CSS_Custom_Highlight_API#browser_compatibility).
+
+As of now (Sept 2024), the latest of Chrome, Firefox, and Safari perform reasonably; though in Firefox, the [highlight API](https://developer.mozilla.org/en-US/docs/Mozilla/Firefox/Experimental_features#css_custom_highlight_api) is experimental right now so support has to be enabled by setting a preference (see their docs for details).
+
+To autoplay the contents from chapter to chapter, go to the page and then go to "site settings" in your browser. Under "audio", say "allow". You only have to do this once for the whole demo site (per domain).
 
 * [Action for Heroes](https://daisy.github.io/accessible-books-in-browsers/demos/action-for-heroes)
 * [Moby Dick](https://daisy.github.io/accessible-books-in-browsers/demos/moby-dick)
@@ -47,13 +64,6 @@ These demos were created using this [conversion script](https://github.com/daisy
 A few things (navigation document consistency across publications; colors in stylesheets or things marked `!important`) were adjusted manually in the EPUB source; this is, after all, just a prototype. But these aspects can and will be automated in the future.
 
 
-### User interface
-
-- Autoplay between chapters is [not working yet](https://github.com/daisy/accessible-books-in-browsers/issues/3)
-- Slight flashing on page load if not using dark mode
-
-[See issues list](https://github.com/daisy/accessible-books-in-browsers/issues)
-
 ## Approach
 
 Generate a set of HTML pages:
@@ -76,6 +86,20 @@ What this isn't:
 * An authoring format definition
 * A generic "player" to apply to any EPUB
 
+
+## Spaces to watch
+
+Advances in these areas would make this project better.
+
+* Coordinating screen reader focus with browser text highlights.
+https://stackoverflow.com/questions/31921688/moving-the-cursor-in-a-screen-reader  
+_Use case: user wants to stop synchronized playback and use their screen reader to explore at a word or character level._
+
+* Web packaging
+https://github.com/WICG/webpackage  
+_Use case: package material for downloadable/offline distribution_
+
 ## Future experiments
 * Use the Shadow DOM for the interface elements and keep the document as plain or close to the original as possible
 * Try the CSS Highlights API to similarly stay out of the document's way
+

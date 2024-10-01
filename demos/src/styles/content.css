@@ -3,6 +3,10 @@ body, main h1, main h2, main h3, main h4, main h5, main h6, main p {
     background-color: rgb(var(--abinb-page-background-color));
     color:rgb(var(--abinb-text-color));
 }
+body {
+    height: auto;
+    min-height: 100vh;
+}
 a {
     color: rgb(var(--abinb-link-color));
 }
@@ -26,26 +30,21 @@ main .abinb-selflink {
 main p {
     line-height: calc(1ex / 0.28);
 }
+body * {
+    scroll-margin: 4rem;
+}
 /* invert the table header colors; otherwise can look weird when using a dark theme */
 body.abinb-dark main table th {
     background-color: rgb(var(--abinb-text-color)) !important;
     color: rgb(var(--abinb-page-background-color)) !important;
 }
-.abinb-sync-highlight { 
+::highlight(narration) { 
     background-color: rgba(var(--abinb-sync-highlight-background-color), 1);
     color: rgba(var(--abinb-sync-highlight-color), 1);
-    border-radius: 4px;
-    padding: 2px;
-    margin: -2px;
 }
-.search-result {
+::highlight(searchresult) {
     background-color: rgba(var(--abinb-search-highlight-background-color), 1);
     color: rgba(var(--abinb-search-highlight-color), 1);
-    padding: 3px;
-    border-radius: 4px;
-    transition: .2s;
-    border: 3px solid rgba(var(--abinb-search-highlight-color), .8);
-    scroll-margin-top: 1rem;
 }
 @supports (font-size-adjust: 1) {
     main {

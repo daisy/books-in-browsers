@@ -1,7 +1,7 @@
 import * as icons from '../icons.js';
 import { setupPanel } from '../panels/panel.js';
 
-async function createNavToolbar() {
+function createNavToolbar() {
     let toolbar = document.querySelector("#abinb-nav-toolbar");
     
     toolbar.innerHTML = 

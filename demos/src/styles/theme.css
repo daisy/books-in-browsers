@@ -24,11 +24,8 @@ body {
     --abinb-sync-highlight-color: var(--abinb-text-color);
     --abinb-search-highlight-background-color: var(--abinb-lightblue);
     --abinb-search-highlight-color: var(--abinb-text-color);
-    --abinb-border-color: var(--abinb-darkgray);
-    --abinb-sync-highlight-font-size: larger;
-    
+    --abinb-border-color: var(--abinb-darkgray);    
     transition: var(--transition);
-
 }
 body.abinb-dark {
     --abinb-text-color: var(--abinb-white);

@@ -1,29 +1,25 @@
-let audio;
+import * as Utils from "./utils.js";
+
 let activeCueIdx = -1; 
 let activeCueMetadata;
 let goingBackwards = false;
-let startedPlayback = false;
 
-async function load() {
-    audio = document.querySelector("#abinb-audio");
+function load() {
+    let audio = document.querySelector("#abinb-audio");
     let track = document.querySelector("#abinb-audio track");
     track.track.addEventListener("cuechange", onCueChange);
-    
     audio.addEventListener("play", e => {
-        startedPlayback = true;
         document.querySelector("body").classList.add("abinb-playing");
-        document.querySelector("#abinb-playpause").setAttribute("title", "Pause");
-        document.querySelector("#abinb-playpause").setAttribute("aria-label", "Pause");
     });
     audio.addEventListener("pause", e => {
         document.querySelector("body").classList.remove("abinb-playing");
-        document.querySelector("#abinb-playpause").setAttribute("title", "Play");
-        document.querySelector("#abinb-playpause").setAttribute("aria-label", "Play");
     });
     audio.addEventListener("ended", e => {
-        localStorage.setItem("abinb-autoplay", true);
         let nextSection = document.querySelector("#abinb-next-section");
-        if (nextSection) nextSection.click();
+        if (nextSection) {
+            localStorage.setItem("abinb-autoplay", true);
+            nextSection.click();
+        } 
     });
     
     // hide the basic html audio player
@@ -42,6 +38,7 @@ async function load() {
 }
 
 function onCueChange(e) {
+    let audio = document.querySelector("#abinb-audio");
     let track = audio.textTracks[0];
     // console.debug("cue change", e);
     let activeCues = Array.from(e.target.activeCues);
@@ -55,36 +52,35 @@ function onCueChange(e) {
 }
 function startCueAction(cueMetadata) {
     activeCueMetadata = cueMetadata;
-    if (cueMetadata.action.name == "addCssClass") {
-        let elm = select(cueMetadata.selector);
-        if (elm) {
-            if (canPlay(elm)) {
-                elm.classList.add(cueMetadata.action.data);
-                if (!isInViewport(elm, document)) {
-                    elm.scrollIntoView();
-                }
-            }
-            else {
-                if (goingBackwards) {
-                    goingBackwards = false;
-                    goPrevious();
-                }
-                else {
-                    goNext();
-                }
+    let elm = select(cueMetadata.selector);
+    if (elm) {
+        if (canPlay(elm)) {
+            let range = Utils.createRange(cueMetadata.selector);
+            let highlight = new Highlight(range);
+            CSS.highlights.set("narration", highlight);
+            if (!Utils.isInViewport(elm, document)) {
+                elm.scrollIntoView();
             }
         }
         else {
-            console.debug(`Element not found ${cueMetadata.selector}`);
+            if (goingBackwards) {
+                goingBackwards = false;
+                goPrevious();
+            }
+            else {
+                goNext();
+            }
         }
+    }
+    else {
+        console.debug(`Element not found ${cueMetadata.selector}`);
     }
 }
 function endCueAction() {
     if (!activeCueMetadata) return;
     let elm = select(activeCueMetadata.selector);
-    // undo add css class
-    if (elm && activeCueMetadata.action.name == "addCssClass") {
-        document.querySelector(`.${activeCueMetadata.action.data}`)?.classList.remove(activeCueMetadata.action.data);
+    if (elm) {
+        // TODO undo highlight? may not be necessary.
     }
 }
 function select(selector) {
@@ -97,6 +93,7 @@ function select(selector) {
     else return null;
 }
 function goNext() {
+    let audio = document.querySelector("#abinb-audio");
     goingBackwards = false;
     let track = audio.textTracks[0];
     if (activeCueIdx != -1) {
@@ -106,6 +103,7 @@ function goNext() {
     }
 }
 function goPrevious() {
+    let audio = document.querySelector("#abinb-audio");
     goingBackwards = true;
     let track = audio.textTracks[0];
     if (activeCueIdx != -1) {
@@ -121,16 +119,6 @@ function canGoNext() {
 function canGoPrevious() {
     return curridx > 0;
 }
-function isInViewport(elm) {
-    let bounding = elm.getBoundingClientRect();
-    let doc = elm.ownerDocument;
-    return (
-        bounding.top >= 0 &&
-        bounding.left >= 0 &&
-        bounding.bottom <= (doc.defaultView.innerHeight || doc.documentElement.clientHeight) &&
-        bounding.right <= (doc.defaultView.innerWidth || doc.documentElement.clientWidth)
-    );
-}
 function canPlay(elm) {
     // true unless this is a pagebreak
     if (elm.classList.contains("epubtype_pagebreak")) {
@@ -141,9 +129,10 @@ function canPlay(elm) {
 // call this when a new page loads
 // it searches the cues list for a starting point, based on the document location hash
 function jumpToFragment() {
+    let audio = document.querySelector("#abinb-audio");
     // only do it if the page is newly loaded
     // caveat and TODO: this doesn't handle in-page jumps 
-    if (startedPlayback) return;
+    //if (startedPlayback) return;
     if (document.location.hash == '') return;
     let track = audio.textTracks[0];
     // all the element selectors that we have cues for
@@ -154,7 +143,6 @@ function jumpToFragment() {
     let getMatchingCueIdx = elm => allSelectors.findIndex(selector => elm.matches(`#${selector}`));
 
     let targetElm = document.querySelector(document.location.hash);
-    
 
     // first see if the target element or any of its descendents have a matching cue
     let matchingCueIdx = getMatchingCueIdx(targetElm);
@@ -175,10 +163,10 @@ function jumpToFragment() {
         }
     }
     if (matchingCueIdx == -1) {
-        console.log("ugh TODO");
+        console.log("Warning: matching cue not found");
         /*
         this could happen for something like
-        <h1 id="target-elm">The href goes here</h1>
+        <h1 id="target-elm">The href in the URL bar goes here</h1>
         <p id="cue-point">But this is the nearest narration point</p>
         */
        // so do we do an exhaustive dom search looking for the nearest starting point in this case?
@@ -193,43 +181,4 @@ function jumpToFragment() {
     
 }
 
-// parse the timestamp and return the value in seconds
-// supports this syntax: https://www.w3.org/publishing/epub/epub-mediaoverlays.html#app-clock-examples
-function parseClockValue(value) { 
-    if (!value) {
-        return null;
-    }
-    let hours = 0;
-    let mins = 0;
-    let secs = 0;
-    
-    if (value.indexOf("min") != -1) {
-        mins = parseFloat(value.substr(0, value.indexOf("min")));
-    }
-    else if (value.indexOf("ms") != -1) {
-        var ms = parseFloat(value.substr(0, value.indexOf("ms")));
-        secs = ms/1000;
-    }
-    else if (value.indexOf("s") != -1) {
-        secs = parseFloat(value.substr(0, value.indexOf("s")));                
-    }
-    else if (value.indexOf("h") != -1) {
-        hours = parseFloat(value.substr(0, value.indexOf("h")));                
-    }
-    else {
-        // parse as hh:mm:ss.fraction
-        // this also works for seconds-only, e.g. 12.345
-        let arr = value.split(":");
-        secs = parseFloat(arr.pop());
-        if (arr.length > 0) {
-            mins = parseFloat(arr.pop());
-            if (arr.length > 0) {
-                hours = parseFloat(arr.pop());
-            }
-        }
-    }
-    let total = hours * 3600 + mins * 60 + secs;
-    return total;
-}
-
-export { load, audio, goNext, goPrevious, canGoNext, canGoPrevious, jumpToFragment };
+export { load, goNext, goPrevious, canGoNext, canGoPrevious, jumpToFragment };

@@ -4,6 +4,7 @@ import { createPlaybackToolbar } from './toolbars/playback.js';
 import { createApplicationToolbar } from './toolbars/application.js';
 import { createNavPanelContents } from './panels/nav.js';
 import { createSettingsPanelContents } from './panels/settings.js';
+import { highlightInPageSearchResult } from './search.js';
 import * as player from './player.js';
 
 async function setupUi(searchIndexUrl, searchDataUrl) {
@@ -12,17 +13,17 @@ async function setupUi(searchIndexUrl, searchDataUrl) {
     let aboutUrl = new URL(document.querySelector("#abinb-about-link").getAttribute("href"), document.location);
     let navUrl = new URL(document.querySelector("#abinb-toc-link").getAttribute("href"), document.location);
 
-    await createNavToolbar();
+    createNavToolbar();
     await createNavPanelContents(navUrl, aboutUrl, searchIndexUrl, searchDataUrl);
     
     let hasSyncAudio = false;
     if (document.querySelector("#abinb-audio")) {
         hasSyncAudio = true;
-        await player.load();
         createPlaybackToolbar();
+        player.load();
     }
     createApplicationToolbar('../src/help');
-    await createSettingsPanelContents(hasSyncAudio);
+    createSettingsPanelContents(hasSyncAudio);
     setupKeyboardShortcuts();
 
     let nextSection = document.querySelector("#abinb-next-section");
@@ -38,30 +39,24 @@ async function setupUi(searchIndexUrl, searchDataUrl) {
         });
     }
 
-    if (localStorage.getItem("abinb-target")) { 
-        let elm = document.querySelector(localStorage.getItem("abinb-target"));
-        if (elm) {
-            elm.classList.add("search-result");
-            elm.scrollIntoView();
-            elm.setAttribute("role", "mark");
-        }
-    }
-    localStorage.setItem("abinb-target", null);
-
+    // make it visible before doing any visual stuff
     document.documentElement.classList.remove("abinb-js");
     document.querySelector("body").classList.add("abinb-fadein");
 
+    // this page may have loaded with a search result target in mind, if so highlight it
+    if (localStorage.getItem("abinb-target")) { 
+        highlightInPageSearchResult(localStorage.getItem("abinb-target"));
+        localStorage.setItem("abinb-target", null);
+    }
+    
     if (localStorage.getItem("abinb-autoplay") == "true") {
+        console.log("autoplay: yes");
         localStorage.setItem("abinb-autoplay", false);
-        // let playButton = document.querySelector("#abinb-playpause");
-        // try {
-        //     console.debug("Attempting to start playback automatically");
-        //     if (playButton) playButton.click();
-        //     else console.error("Play button not found");
-        // }
-        // catch(err) {
-        //     console.error(err);
-        // }
+        let audio = document.querySelector("#abinb-audio");
+        if (audio) audio.autoplay = true;
+    }
+    else {
+        console.log("autoplay: no");
     }
 }
 

@@ -9,7 +9,6 @@ import { parse } from './file-io.js';
 import path from 'path';
 import fs from 'fs-extra';
 import Fuse from 'fuse.js'
-import tmp from 'tmp';
 import winston from 'winston';
 
 async function generateSearchIndex(filenames: Array<string>, outputDirname) {

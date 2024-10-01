@@ -2,7 +2,7 @@
   "name": "convert",
   "version": "1.0.0",
   "description": "",
-  "main": "shift-smil.js",
+  "main": "index.js",
   "type": "module",
   "scripts": {
     "build": "npm run clean && npm run compile",
